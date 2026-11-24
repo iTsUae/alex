@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Send a message</title>
+<style>
+  body{font-family:system-ui,sans-serif;background:#111;color:#eee;display:grid;place-items:center;min-height:100vh;margin:0}
+  form{width:min(92vw,420px);display:grid;gap:12px}
+  input,textarea,button{font:inherit;padding:12px;border-radius:8px;border:1px solid #333;background:#1c1c1c;color:#eee}
+  textarea{min-height:140px;resize:vertical}
+  button{background:#5865f2;border:0;cursor:pointer}
+  button:disabled{opacity:.5}
+</style>
+<form id="f">
+  <h2>Send me a message</h2>
+  <input name="name" placeholder="Your name" required maxlength="80">
+  <textarea name="msg" placeholder="Your message" required maxlength="1500"></textarea>
+  <button>Send</button>
+  <small id="s"></small>
+</form>
+<script>
+const WEBHOOK = "https://discord.com/api/webhooks/1564977083078148190/xq15XFji8xOLHSjSlGAjgytTr5KC5O__YOxJ1qJ869G9EbCmOw79AOoRUa7bKNbUswx0";
+
+f.onsubmit = async e => {
+  e.preventDefault();
+  const b = f.querySelector("button"), d = new FormData(f);
+  b.disabled = true; s.textContent = "Sending...";
+  try {
+    const r = await fetch(WEBHOOK, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({content: `**${d.get("name")}**\n${d.get("msg")}`, allowed_mentions: {parse: []}})
+    });
+    if (!r.ok) throw 0;
+    s.textContent = "Sent"; f.reset();
+  } catch { s.textContent = "Failed to send"; }
+  b.disabled = false;
+};
+</script>
+</html>
